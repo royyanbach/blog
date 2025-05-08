@@ -1,0 +1,44 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const techPosts = await getCollection('tech');
+  const mindPosts = await getCollection('mind');
+  const allPosts = [...techPosts, ...mindPosts];
+
+  return allPosts.map(post => ({
+    params: { category: post.collection, id: post.id },
+    props: { post },
+  }));
+}
+
+type Props = {
+  post: CollectionEntry<'tech'> | CollectionEntry<'mind'>;
+}
+
+const { post } = Astro.props;
+
+if (!post || !post.rendered) {
+  return Astro.redirect('/404');
+}
+
+function formatDate(date: Date): string {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+---
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <article class="max-w-3xl mx-auto">
+    <div class="mb-8 border-b border-neutral-300 pb-6">
+      <h1 class="text-6xl/16 text-neutral-800 mb-5">{post.data.title}</h1>
+      <p class="text font-semibold text-cyan-700">
+        <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time> &bull; <a href={`/${post.collection}`} class="underline capitalize hover:underline">{post.collection}</a>
+      </p>
+    </div>
+    <div class="prose prose-neutral lg:prose-lg" set:html={post.rendered.html} />
+  </article>
+</BaseLayout>

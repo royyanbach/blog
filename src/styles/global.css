@@ -1,0 +1,27 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+.prose-neutral {
+	--tw-prose-code: oklch(0.59 0.26 357.24);
+}
+
+.prose-neutral code:not(pre code)::before,
+.prose-neutral code:not(pre code)::after {
+  content: none;
+}
+
+.prose-neutral pre {
+	padding: 0;
+}
+
+.prose-neutral pre .line {
+	padding: 0 1.5rem;
+}
+
+.astro-code .line.highlighted {
+  background-color: rgba(255, 255, 0, 0.1);
+  display: inline-table;
+  width: 100%;
+}
